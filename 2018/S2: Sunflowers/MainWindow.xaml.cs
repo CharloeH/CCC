@@ -21,10 +21,11 @@ namespace Sunflowers
     /// </summary>
     public partial class MainWindow : Window
     {
-        char[] temp;
+        char[] unformatedInput;
         string input;
         int[,] data;
         int length;
+        List<string> sunflowers;
         public MainWindow()
         {
             InitializeComponent();
@@ -34,54 +35,63 @@ namespace Sunflowers
 
         private void BtnClick_Click(object sender, RoutedEventArgs e)
         {
+            sunflowers = new List<string>();
             txtOutput.Text = "";
             input = txtInput.Text;
             int.TryParse(input.Substring(0, 1), out length);
-            temp = input.Substring(1).ToCharArray();
+            unformatedInput = input.Substring(1).ToCharArray();
+            string temp = "";
             input = "";
-            foreach(char c in temp)
-            {
-                if(!(c == ' ' || c == '\r' || c == '\n'))
-                {
-                    input += c;
-                }
-            }
-            int tempInt= 0;
-            int i = 0;
             int counter = 0;
-            data = new int[length, length];
-            for (int y = 0; y < data.GetLength(0); y++)
+            foreach (char c in unformatedInput)
             {
-                tempInt = 0;
-                for(int x = 0; x < data.GetLength(1); x++)
+                if (c != '\n' && c != ' ' && c != '\r')
                 {
-                    int.TryParse(input.Substring(i, 1), out data[y,x]);
-                    if(data[y,x] >= tempInt || tempInt == 0)
-                    {
-                        counter++;
-                        if(counter == length*length)
-                        {
-                            txtOutput.Text = "YAY";
-                        }
-                    }
-                    else
-                    {
-                       
-                    }
-                    i++;
-                    tempInt = data[y, x];
+                    temp += c.ToString();
+                    counter++;
+                }
+                if (counter == length)
+                {
+                    sunflowers.Add(temp);
+                    temp = "";
+                    counter = 0;
                 }
             }
-            
-            
-        }
-      private void rotateGrid(int[,] data)
-        {
-            int previousValue = 0;
-           foreach(int i in data)
+            int compareValue = 0;
+            bool? lessThan180 = null;
+            foreach (string s in sunflowers)
             {
-                previousValue = i;
-                i 
+                
+                for (int i = 0; i < length - 1; i++)
+                {
+                    int.TryParse(s.Substring(i, 1), out int firstInSet);
+                    int.TryParse(s.Substring(i + 1, 1), out int secondInSet);
+                 
+                        if(compareValue < firstInSet)
+                        {
+                        if (lessThan180 == true)
+                            txtOutput.Text =("90");
+                        else if (lessThan180 == false)
+                            txtOutput.Text =("360");
+                        }
+                        else
+                        {
+                        if (lessThan180 == true)
+                            txtOutput.Text = ("180");
+                        else if (lessThan180 == false)
+                            txtOutput.Text = ("270");
+                    }
+                    if(firstInSet > secondInSet)
+                    {
+                        lessThan180 = true;
+                    }
+                    else if(firstInSet < secondInSet)
+                    {
+                        lessThan180 = false;
+                      
+                    }
+                    compareValue = firstInSet;
+                }
             }
         }
     }
