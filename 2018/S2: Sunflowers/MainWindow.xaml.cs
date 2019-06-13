@@ -23,8 +23,8 @@ namespace Sunflowers
     {
         char[] unformatedInput;
         string input;
-        int[,] data;
         int length;
+        string allData = "";
         List<string> sunflowers;
         public MainWindow()
         {
@@ -35,63 +35,74 @@ namespace Sunflowers
 
         private void BtnClick_Click(object sender, RoutedEventArgs e)
         {
+            getInput();
+           // Rotation(360, formatList(getInput(),1));
+            Rotation(90, formatList(getInput(),length));
+            
+        }
+        private List<string> formatList(string data, int stepPattern)
+        {
             sunflowers = new List<string>();
+            string temp = "";
+            for (int counter = 0; counter < length; counter++)
+            {
+                for (int i = 0; i < length; i++)
+                {
+                    if (data.Length == length)
+                    {
+                        temp = data;
+                        break;
+                    }
+                    else
+                    {
+                        temp += data[i * stepPattern];
+                    }
+                }
+                foreach (char c in temp)
+                {
+                    data = data.Remove(data.IndexOf(c), 1);
+                }
+                sunflowers.Add(temp);
+                temp = "";
+            }
+            return sunflowers;
+        }
+        private string getInput()
+        {
             txtOutput.Text = "";
             input = txtInput.Text;
             int.TryParse(input.Substring(0, 1), out length);
             unformatedInput = input.Substring(1).ToCharArray();
-            string temp = "";
-            input = "";
-            int counter = 0;
+            allData = "";
             foreach (char c in unformatedInput)
             {
                 if (c != '\n' && c != ' ' && c != '\r')
                 {
-                    temp += c.ToString();
-                    counter++;
-                }
-                if (counter == length)
-                {
-                    sunflowers.Add(temp);
-                    temp = "";
-                    counter = 0;
+                     allData += c.ToString();
                 }
             }
-            int compareValue = 0;
-            bool? lessThan180 = null;
-            foreach (string s in sunflowers)
-            {
-                
-                for (int i = 0; i < length - 1; i++)
+            return allData;
+        }
+        private void Rotation(int angle, List<string> data)
+        {
+            int counter = 0;
+                foreach (string s in data)
                 {
-                    int.TryParse(s.Substring(i, 1), out int firstInSet);
-                    int.TryParse(s.Substring(i + 1, 1), out int secondInSet);
-                 
-                        if(compareValue < firstInSet)
-                        {
-                        if (lessThan180 == true)
-                            txtOutput.Text =("90");
-                        else if (lessThan180 == false)
-                            txtOutput.Text =("360");
-                        }
-                        else
-                        {
-                        if (lessThan180 == true)
-                            txtOutput.Text = ("180");
-                        else if (lessThan180 == false)
-                            txtOutput.Text = ("270");
-                    }
-                    if(firstInSet > secondInSet)
+                    int previousValue = 0;
+                    foreach (char c in s)
                     {
-                        lessThan180 = true;
-                    }
-                    else if(firstInSet < secondInSet)
+                    if (previousValue < c)
                     {
-                        lessThan180 = false;
-                      
+                        previousValue = c;
+                        counter++;
                     }
-                    compareValue = firstInSet;
+                    else
+                        break;
+                    }
                 }
+            if(counter == length*length)
+            {
+                Console.WriteLine(angle);
             }
         }
     }
