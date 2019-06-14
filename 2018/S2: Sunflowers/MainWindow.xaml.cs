@@ -21,24 +21,37 @@ namespace Sunflowers
     /// </summary>
     public partial class MainWindow : Window
     {
+       
         char[] unformatedInput;
         string input;
         int length;
         string allData = "";
         List<string> sunflowers;
+        string output;
         public MainWindow()
         {
             InitializeComponent();
-            
-           
         }
 
         private void BtnClick_Click(object sender, RoutedEventArgs e)
         {
-            getInput();
-           // Rotation(360, formatList(getInput(),1));
-            Rotation(90, formatList(getInput(),length));
-            
+            int row = 1;
+            if (Rotation(360, formatList(getInput(1), 1)))
+            {
+                MessageBox.Show("360");
+            }
+            else if (Rotation(90, formatList(getInput(1), length)))
+            {
+                MessageBox.Show("90");
+            }
+            else if(Rotation(180, formatList((getInput(-1)), 1)))
+            {
+                MessageBox.Show("180");
+            }
+            if (Rotation(270, formatList((getInput(-1)), length)))
+            {
+                MessageBox.Show("270");
+            }
         }
         private List<string> formatList(string data, int stepPattern)
         {
@@ -67,43 +80,58 @@ namespace Sunflowers
             }
             return sunflowers;
         }
-        private string getInput()
+        private string getInput(int direction)
         {
             txtOutput.Text = "";
             input = txtInput.Text;
             int.TryParse(input.Substring(0, 1), out length);
             unformatedInput = input.Substring(1).ToCharArray();
+
+
             allData = "";
-            foreach (char c in unformatedInput)
+            if (direction == -1)
             {
-                if (c != '\n' && c != ' ' && c != '\r')
-                {
-                     allData += c.ToString();
-                }
+                Array.Reverse(unformatedInput);
             }
+            foreach (char c in unformatedInput)
+                {
+                    if(c != '\n' && c != ' ' && c != '\r')
+                    {
+                        allData += c.ToString();
+                        output = allData;
+                    }
+                }
+               
             return allData;
         }
-        private void Rotation(int angle, List<string> data)
+        private bool Rotation(int angle, List<string> data)
         {
             int counter = 0;
                 foreach (string s in data)
                 {
-                    int previousValue = 0;
+                    int verticalTest = 0;
+                    int horizontalTest = 0;
                     foreach (char c in s)
                     {
-                    if (previousValue < c)
+                    if (horizontalTest < c)
                     {
-                        previousValue = c;
+                        horizontalTest = c;
                         counter++;
+                    }
+                    if(verticalTest < s[0])
+                    {
+                        verticalTest = s[0];
                     }
                     else
                         break;
                     }
                 }
-            if(counter == length*length)
+            if (counter == length * length)
             {
-                Console.WriteLine(angle);
+                return true;
             }
+            else
+                return false;
         }
     }
 }
